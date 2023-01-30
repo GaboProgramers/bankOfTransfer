@@ -1,9 +1,11 @@
 const User = require("../models/user.model")
-const { accountNumber, amount } = require("../helpers/accountNumberGenerator")
+const Transfer = require("../models/transfer.model")
+const { amount } = require("../helpers/accountNumberGenerator")
 
 exports.signupUser = async (req, res) => {
     try {
         const { password, name } = req.body
+        const accountNumber = Math.floor(Math.random() * 999999) + 1
 
         const newUser = await User.create({
             accountNumber,
@@ -14,7 +16,7 @@ exports.signupUser = async (req, res) => {
 
         res.status(201).json({
             status: "succses",
-            message: "Usuario creado satisfactoriamente",
+            message: "user created successfully",
             newUser
         })
     } catch (error) {
@@ -40,7 +42,7 @@ exports.loginUser = async (req, res) => {
 
         res.status(201).json({
             status: "succses",
-            message: "Sesion iniciada satisfactoriamente",
+            message: "session started successfully",
             newLogin
         })
     } catch (error) {
@@ -52,15 +54,24 @@ exports.loginUser = async (req, res) => {
     }
 }
 
-exports.getHistoryUser = (req, res) => {
-    console.log(req.body);
-    const { id } = req.body
+exports.getHistoryUser = async (req, res) => {
+    try {
+        const transfers = await Transfer.findAll({
+            where: {
+                status: true
+            }
+        })
 
-    res.json({
-        status: "succses",
-        message: "Route - get history User - Controllers",
-        userHistory: {
-            id
-        }
-    })
+        res.status(200).json({
+            status: "succses",
+            message: "history obtained",
+            transfers
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'fail',
+            message: 'Internal server error',
+        });
+    }
 }

@@ -15,15 +15,14 @@ const User = db.define('user', {
     },
     accountNumber: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false
     },
     amount: {
-        type: DataTypes.STRING,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
     status: {

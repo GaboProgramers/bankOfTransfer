@@ -9,7 +9,7 @@ const Transfer = db.define('transfers', {
         type: DataTypes.INTEGER
     },
     amount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
     senderUserId: {

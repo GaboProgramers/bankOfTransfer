@@ -1,60 +1,71 @@
-const Transfer = require("../models/transfer.model");
 const User = require("../models/user.model");
 
-exports.validAmount = async (req, res, next) => {
+exports.validUserReceiberTransfer = async (req, res, next) => {
     try {
-        const { amount, senderUserId, receiverUserId } = req.body
+        // ? 1. RECIBIMOS POR LA req.body LA INFORMACION QUE NOS LLEGA POR LA REQUES
+        const { accountNumber } = req.body
 
-        // ? usuario que recibe
-        const userRx = await User.findOne({
+        // ? 2. BUSCAMOS EL USUARIO QUE VA AH RECIBIR LA TRANSFERENCIA,
+        // ? SIEMPRE Y CUANDO EL NUMERO DE CUENTA SEA IGUAL AL QUE RECIBIMOS POR LA req.body
+        const userReceiberTransfer = await User.findOne({
             where: {
-                accountNumber: receiverUserId,
+                accountNumber,
                 status: true
             }
         })
 
-        const receiverUser = userRx.id
+        // ? 3. VERIFICAMOS QUE EL USUARIO EXISTA SI NO ENVIAMOS UN ERROR
+        if (!userReceiberTransfer) {
+            return res.status(404).json({
+                status: "error",
+                message: "user not found"
+            })
+        }
 
-        // ? usuario que envia
-        const userTx = await User.findOne({
+        // ? 4. AGREGAMOS UNA NUEVA PROPIEDAD A LA req CON EL ID DEL USUARIO QUE VA A RECIBIR
+        req.receiverUserId = userReceiberTransfer.id
+        // ? 5. AGREGAMOS OTRA PROPIEDAD A LA req CON EL NOMBRE DE LA VARIABLE DONDE OBTENEMOS,
+        // ? AL USUARIO QUE VA AH RECIBIR.
+        req.userReceiberTransfer = userReceiberTransfer
+
+        next()
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 'fail',
+            message: 'Internal server error'
+        });
+    }
+}
+
+exports.validUserSenderTransfer = async (req, res, next) => {
+    try {
+        // ? 1. RECIBIMOS POR LA req.body LA INFORMACION QUE NOS LLEGA POR LA REQUES
+        const { senderUserId } = req.body
+
+        // ? 2. BUSCAMOS EL USUARIO QUE VA AH ENVIAR LA TRANSFERENCIA,
+        // ? SIEMPRE Y CUANDO EL ID SEA IGUAL AL QUE RECIBIMOS POR LA req.body
+        const userSenderTransfer = await User.findOne({
             where: {
                 id: senderUserId,
                 status: true
             }
         })
 
-        const amountUser = userTx.amount
-
-        if (amount > amountUser) {
-            return res.status(400).json({
+        // ? 3. VERIFICAMOS QUE EL USUARIO EXISTA SI NO ENVIAMOS UN ERROR
+        if (!userSenderTransfer) {
+            return res.status(404).json({
                 status: "error",
-                message: "no cuenta con el dinero suficiente para esta operacion"
+                message: "user not found"
             })
         }
 
-        if (receiverUser === senderUserId) {
-            return res.status(400).json({
-                status: "error",
-                message: "no puede enviarse dinero usted mismo"
-            })
-        }
+        // ? 4. AGREGAMOS UNA NUEVA PROPIEDAD A LA req CON LA CATIDAD QUE TIENE EL USUARIO A ENVIAR.
+        req.amountSenderUser = userSenderTransfer.amount
+        // ? 5. AGREGAMOS OTRA PROPIEDAD A LA req CON EL NOMBRE DE LA VARIABLE DONDE OBTENEMOS,
+        // ? AL USUARIO QUE VA AH ENVIAR.
+        req.userSenderTransfer = userSenderTransfer
 
-        const newAmountMakeTransfer = userTx.amount - amount
-        const newAmountUserReceiver = userRx.amount + amount
-
-        await userTx.update({
-            amount: newAmountMakeTransfer
-        })
-
-        await userRx.update({
-            amount: newAmountUserReceiver
-        })
-
-        await Transfer.create({
-            amount,
-            senderUserId,
-            receiverUserId: receiverUser
-        })
         next()
     } catch (error) {
         console.log(error);
