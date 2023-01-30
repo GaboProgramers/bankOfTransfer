@@ -3,6 +3,7 @@ const { check } = require("express-validator")
 const { signupUser, loginUser, getHistoryUser } = require("../controllers/user.controller")
 const { validUser } = require("../middleware/user.middleware")
 const { validateFields } = require("../middleware/validateFiel.middleware")
+const { validAccount } = require("../middleware/verificAccount.middleware")
 
 const router = Router()
 
@@ -12,7 +13,7 @@ router.post('/signup', [
     validUser
 ], signupUser)
 
-router.post('/login', loginUser)
+router.post('/login', validAccount, loginUser)
 router.get('/:id/history', getHistoryUser)
 
 module.exports = {

@@ -9,7 +9,7 @@ const Transfer = db.define('transfers', {
         type: DataTypes.INTEGER
     },
     amount: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     senderUserId: {
@@ -27,4 +27,4 @@ const Transfer = db.define('transfers', {
     }
 })
 
-module.exports = User
+module.exports = Transfer

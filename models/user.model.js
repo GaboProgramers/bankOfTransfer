@@ -23,9 +23,8 @@ const User = db.define('user', {
         allowNull: false
     },
     amount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: "1000"
+        type: DataTypes.STRING,
+        allowNull: false
     },
     status: {
         type: DataTypes.BOOLEAN,

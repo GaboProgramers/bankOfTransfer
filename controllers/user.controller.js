@@ -1,15 +1,15 @@
 const User = require("../models/user.model")
+const { accountNumber, amount } = require("../helpers/accountNumberGenerator")
 
 exports.signupUser = async (req, res) => {
     try {
         const { password, name } = req.body
 
-        const accountNumber = Math.floor(Math.random() * 999999) + 1
-
         const newUser = await User.create({
             accountNumber,
             password,
-            name: name.toLowerCase()
+            name: name.toLowerCase(),
+            amount
         })
 
         res.status(201).json({
@@ -30,15 +30,18 @@ exports.loginUser = async (req, res) => {
     try {
         const { accountNumber, password } = req.body
 
-        const newUser = await User.findOne({
-            accountNumber: accountNumber,
-            password: password
+        const newLogin = await User.findOne({
+            where: {
+                accountNumber,
+                password,
+                status: true
+            }
         })
 
         res.status(201).json({
             status: "succses",
             message: "Sesion iniciada satisfactoriamente",
-            newUser
+            newLogin
         })
     } catch (error) {
         console.log(error);

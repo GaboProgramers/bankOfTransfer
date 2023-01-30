@@ -1,11 +1,7 @@
-exports.sendTransfer = (req, res) => {
-    const { amount, senderUserId, receiverUserId } = req.body
+exports.sendTransfer = async (req, res) => {
 
-    res.json({
-        transfer: {
-            amount,
-            senderUserId,
-            receiverUserId
-        }
+    await res.status(200).json({
+        status: "sucsess",
+        message: 'transaccion exitosa'
     })
 }
