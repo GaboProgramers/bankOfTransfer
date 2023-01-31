@@ -13,6 +13,11 @@ exports.sendTransfer = catchAsync(async (req, res, next) => {
         return next(new AppError('insufficient fund', 400))
     }
 
+    // ? 3.1 verificamos que el monto enviado no sea menor al monto de la cuenta del usuario.
+    if (amount < amountSenderUser) {
+        return next(new AppError('insufficient fund', 400))
+    }
+
     // ? 4. Verificamos que el ID del que envia no sea igual al ID que recibe.
     if (receiverUserId === senderUserId) {
         return next(new AppError('Cant send money to your same account', 400))
