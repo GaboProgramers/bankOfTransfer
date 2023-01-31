@@ -1,29 +1,20 @@
 const User = require("../models/user.model");
+const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
 
-exports.validUser = async (req, res, next) => {
-    try {
-        const { name } = req.body
+exports.validUser = catchAsync(async (req, res, next) => {
+    const { name } = req.body
 
-        const user = await User.findOne({
-            where: {
-                name: name.toLowerCase()
-            }
-        })
-
-        if (user) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'the user already exists'
-            })
+    const user = await User.findOne({
+        where: {
+            name: name.toLowerCase()
         }
-        next()
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            status: 'fail',
-            message: 'Internal server error',
-        });
+    })
+
+    if (user) {
+        return next(new AppError('the user already exists', 400))
     }
-}
+    next()
+})
 
 // ! no va
