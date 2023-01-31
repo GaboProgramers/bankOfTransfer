@@ -1,7 +1,6 @@
 const { Router } = require("express")
 const { check } = require("express-validator")
 const { signupUser, loginUser, getHistoryUser } = require("../controllers/user.controller")
-const { validUser } = require("../middleware/user.middleware")
 const { validateFields } = require("../middleware/validateFiel.middleware")
 const { validAccount } = require("../middleware/verificAccount.middleware")
 
@@ -9,8 +8,8 @@ const router = Router()
 
 router.post('/signup', [
     check('name', 'Name is require').not().isEmpty(),
-    validateFields,
-    validUser
+    check('password', 'password is require').not().isEmpty(),
+    validateFields
 ], signupUser)
 
 router.post('/login', validAccount, loginUser)

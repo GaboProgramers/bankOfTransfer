@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+/* const User = require("../models/user.model");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -15,4 +15,4 @@ exports.validUser = catchAsync(async (req, res, next) => {
         return next(new AppError('the user already exists', 400))
     }
     next()
-})
+}) */

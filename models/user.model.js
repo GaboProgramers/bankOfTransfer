@@ -10,8 +10,7 @@ const User = db.define('user', {
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     accountNumber: {
         type: DataTypes.INTEGER,
